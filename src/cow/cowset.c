@@ -25,6 +25,10 @@ static PyObject *CowSet_new(PyTypeObject *t, PyObject *a, PyObject *k) {
     CowSetObject *self = (CowSetObject *)t->tp_alloc(t, 0);
     if (self) {
         self->data = PySet_New(NULL);
+        if (!self->data) {
+            Py_DECREF(self);
+            return NULL;
+        }
     }
     return (PyObject *)self;
 }
@@ -181,7 +185,13 @@ static PyObject *cowset_apply_op(CowSetObject *self, PyObject *other, const char
     if (!new_data) {
         return NULL;
     }
-    PyObject *result = PyObject_CallMethodOneArg(new_data, PyUnicode_FromString(methname), od);
+    PyObject *meth = PyUnicode_FromString(methname);
+    if (!meth) {
+        Py_DECREF(new_data);
+        return NULL;
+    }
+    PyObject *result = PyObject_CallMethodOneArg(new_data, meth, od);
+    Py_DECREF(meth);
     if (!result) {
         Py_DECREF(new_data);
         return NULL;
@@ -208,7 +218,12 @@ static PyObject *CowSet_symmetric_difference_update(CowSetObject *self, PyObject
 
 static PyObject *cowset_new_result(CowSetObject *self, PyObject *other, const char *methname) {
     PyObject *od = Py_IS_TYPE(other, &CowSetType) ? ((CowSetObject *)other)->data : other;
-    PyObject *result_data = PyObject_CallMethodOneArg(self->data, PyUnicode_FromString(methname), od);
+    PyObject *meth = PyUnicode_FromString(methname);
+    if (!meth) {
+        return NULL;
+    }
+    PyObject *result_data = PyObject_CallMethodOneArg(self->data, meth, od);
+    Py_DECREF(meth);
     if (!result_data) {
         return NULL;
     }
