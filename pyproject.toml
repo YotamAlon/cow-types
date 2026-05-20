@@ -11,5 +11,8 @@ requires-python = ">=3.9"
 [project.optional-dependencies]
 dev = ["pytest"]
 
+[tool.pylint."messages control"]
+disable = ["missing-module-docstring", "missing-class-docstring", "missing-function-docstring"]
+
 [tool.ci]
 python-versions = ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]

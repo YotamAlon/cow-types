@@ -1,4 +1,7 @@
+from pathlib import Path
 from setuptools import setup, Extension
+
+HERE = Path(__file__).parent
 
 setup(
     ext_modules=[
@@ -11,7 +14,7 @@ setup(
                 "src/cow/cowlist.c",
                 "src/cow/_cowmodule.c",
             ],
-            include_dirs=["src/cow"],
+            include_dirs=[str(HERE / "src" / "cow")],
             extra_compile_args=["-O2", "-Wall"],
         )
     ],
