@@ -6,12 +6,24 @@ on:
   pull_request:
 
 jobs:
+  get-versions:
+    runs-on: ubuntu-latest
+    outputs:
+      versions: ${{ steps.load.outputs.versions }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: load
+        run: |
+          versions=$(python3 -c "import tomllib, json; data = tomllib.load(open('pyproject.toml', 'rb')); print(json.dumps(data['tool']['ci']['python-versions']))")
+          echo "versions=$versions" >> $GITHUB_OUTPUT
+
   test:
+    needs: get-versions
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
+        python-version: ${{ fromJson(needs.get-versions.outputs.versions) }}
 
     steps:
       - uses: actions/checkout@v4
