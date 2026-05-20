@@ -14,6 +14,12 @@ setup(
                 "src/cow/cowlist.c",
                 "src/cow/_cowmodule.c",
             ],
+            depends=[
+                "src/cow/cow_utils.h",
+                "src/cow/cowdict.h",
+                "src/cow/cowlist.h",
+                "src/cow/cowset.h",
+            ],
             include_dirs=[str(HERE / "src" / "cow")],
             extra_compile_args=["-O2", "-Wall"],
         )
