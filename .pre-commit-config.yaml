@@ -1,0 +1,26 @@
+repos:
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 25.1.0
+    hooks:
+      - id: black
+
+  - repo: https://github.com/PyCQA/pylint
+    rev: v3.3.7
+    hooks:
+      - id: pylint
+
+  - repo: https://github.com/cpp-linter/cpp-linter-hooks
+    rev: v1.4.0
+    hooks:
+      - id: clang-format
+        args: [--style=Google]
+      - id: clang-tidy
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: bash -c 'pip install -e . -q && pytest'
+        language: system
+        pass_filenames: false
+        always_run: true
