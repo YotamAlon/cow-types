@@ -25,6 +25,10 @@ static PyObject *CowList_new(PyTypeObject *t, PyObject *a, PyObject *k) {
     CowListObject *self = (CowListObject *)t->tp_alloc(t, 0);
     if (self) {
         self->data = PyList_New(0);
+        if (!self->data) {
+            Py_DECREF(self);
+            return NULL;
+        }
     }
     return (PyObject *)self;
 }
@@ -129,7 +133,13 @@ static PyObject *CowList_extend(CowListObject *self, PyObject *other) {
     if (!new_data) {
         return NULL;
     }
-    PyObject *r = PyObject_CallMethodOneArg(new_data, PyUnicode_FromString("extend"), od);
+    PyObject *meth = PyUnicode_FromString("extend");
+    if (!meth) {
+        Py_DECREF(new_data);
+        return NULL;
+    }
+    PyObject *r = PyObject_CallMethodOneArg(new_data, meth, od);
+    Py_DECREF(meth);
     if (!r) {
         Py_DECREF(new_data);
         return NULL;
@@ -165,7 +175,13 @@ static PyObject *CowList_remove(CowListObject *self, PyObject *item) {
     if (!new_data) {
         return NULL;
     }
-    PyObject *r = PyObject_CallMethodOneArg(new_data, PyUnicode_FromString("remove"), item);
+    PyObject *meth = PyUnicode_FromString("remove");
+    if (!meth) {
+        Py_DECREF(new_data);
+        return NULL;
+    }
+    PyObject *r = PyObject_CallMethodOneArg(new_data, meth, item);
+    Py_DECREF(meth);
     if (!r) {
         Py_DECREF(new_data);
         return NULL;
@@ -187,7 +203,18 @@ static PyObject *CowList_pop(CowListObject *self, PyObject *args) {
         return NULL;
     }
     PyObject *idx = PyLong_FromSsize_t(index);
-    PyObject *item = PyObject_CallMethodOneArg(new_data, PyUnicode_FromString("pop"), idx);
+    if (!idx) {
+        Py_DECREF(new_data);
+        return NULL;
+    }
+    PyObject *meth = PyUnicode_FromString("pop");
+    if (!meth) {
+        Py_DECREF(idx);
+        Py_DECREF(new_data);
+        return NULL;
+    }
+    PyObject *item = PyObject_CallMethodOneArg(new_data, meth, idx);
+    Py_DECREF(meth);
     Py_DECREF(idx);
     if (!item) {
         Py_DECREF(new_data);
@@ -216,8 +243,24 @@ static PyObject *CowList_sort(CowListObject *self, PyObject *args, PyObject *kwd
     if (!new_data) {
         return NULL;
     }
-    args = args ? args : PyTuple_New(0);
-    PyObject *r = PyObject_Call( PyObject_GetAttrString(new_data, "sort"), args, kwds);
+    PyObject *sort_meth = PyObject_GetAttrString(new_data, "sort");
+    if (!sort_meth) {
+        Py_DECREF(new_data);
+        return NULL;
+    }
+    PyObject *empty = NULL;
+    if (!args) {
+        empty = PyTuple_New(0);
+        if (!empty) {
+            Py_DECREF(sort_meth);
+            Py_DECREF(new_data);
+            return NULL;
+        }
+        args = empty;
+    }
+    PyObject *r = PyObject_Call(sort_meth, args, kwds);
+    Py_DECREF(sort_meth);
+    Py_XDECREF(empty);
     if (!r) {
         Py_DECREF(new_data);
         return NULL;

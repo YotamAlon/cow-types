@@ -25,6 +25,10 @@ static PyObject *CowDict_new(PyTypeObject *t, PyObject *a, PyObject *k) {
     CowDictObject *self = (CowDictObject *)t->tp_alloc(t, 0);
     if (self) {
         self->data = PyDict_New();
+        if (!self->data) {
+            Py_DECREF(self);
+            return NULL;
+        }
     }
     return (PyObject *)self;
 }
@@ -232,7 +236,13 @@ static PyObject *CowDict_popitem(CowDictObject *self, PyObject *Py_UNUSED(ignore
     if (!new_data) {
         return NULL;
     }
-    PyObject *item = PyObject_CallMethodNoArgs(new_data, PyUnicode_FromString("popitem"));
+    PyObject *meth = PyUnicode_FromString("popitem");
+    if (!meth) {
+        Py_DECREF(new_data);
+        return NULL;
+    }
+    PyObject *item = PyObject_CallMethodNoArgs(new_data, meth);
+    Py_DECREF(meth);
     if (!item) {
         Py_DECREF(new_data);
         return NULL;
