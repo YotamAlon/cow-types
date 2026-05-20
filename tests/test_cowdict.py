@@ -1,5 +1,5 @@
 import pytest
-from cow import cowdict
+from cow_types import cowdict
 
 
 def test_init_empty():

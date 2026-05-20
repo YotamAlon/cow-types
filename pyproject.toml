@@ -3,13 +3,17 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "python-cow"
+name = "cow-types"
 version = "0.1.0"
 description = "Copy-on-write alternatives to dict, set, and list"
+readme = "README.md"
 requires-python = ">=3.9"
 
 [project.optional-dependencies]
 dev = ["pytest"]
+
+[tool.pylint.main]
+extension-pkg-allow-list = ["cow_types._cow"]
 
 [tool.pylint."messages control"]
 disable = ["missing-module-docstring", "missing-class-docstring", "missing-function-docstring"]
