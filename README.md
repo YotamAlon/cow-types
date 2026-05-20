@@ -1,4 +1,4 @@
-# python-cow
+# cow-types
 
 Copy-on-write alternatives to Python's built-in `dict`, `set`, and `list`.
 

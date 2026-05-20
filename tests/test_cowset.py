@@ -1,5 +1,5 @@
 import pytest
-from cow import cowset
+from cow_types import cowset
 
 
 def test_init_empty():
@@ -68,7 +68,6 @@ def test_add_does_not_mutate_shared_data():
 def test_add_existing_element():
     # Arrange
     s = cowset({1, 2})
-    original_id = id(s)
 
     # Act  — adding an already-present element still triggers COW
     s.add(1)
@@ -93,7 +92,6 @@ def test_discard_existing_creates_new_instance():
 def test_discard_missing_is_noop():
     # Arrange
     s = cowset({1, 2})
-    original_id = id(s)
 
     # Act  — discarding a missing element does not mutate
     s.discard(99)
@@ -317,6 +315,3 @@ def test_repr():
 
     # Assert
     assert repr(s) == "cowset({42})"
-
-
-
