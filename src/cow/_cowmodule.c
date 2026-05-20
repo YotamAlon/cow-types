@@ -6,7 +6,8 @@ static PyModuleDef cowmodule = {
     PyModuleDef_HEAD_INIT, "_cow", NULL, -1, NULL,
 };
 
-PyMODINIT_FUNC PyInit__cow(void) {
+PyMODINIT_FUNC PyInit__cow(void) // NOLINT(misc-use-internal-linkage)
+{
     PyObject *m = PyModule_Create(&cowmodule);
     if (!m) {
         return NULL;
@@ -15,7 +16,7 @@ PyMODINIT_FUNC PyInit__cow(void) {
         Py_DECREF(m);
         return NULL;
     }
-    if (CowSet_register(m)  < 0) {
+    if (CowSet_register(m) < 0) {
         Py_DECREF(m);
         return NULL;
     }
