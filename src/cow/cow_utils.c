@@ -41,5 +41,13 @@ int cow_replace_in_frame(PyObject *old_obj, PyObject *new_obj)
 
     Py_DECREF(items);
     Py_DECREF(locals);
+
+#if PY_VERSION_HEX < 0x030D0000
+    if (found) {
+        PyFrame_LocalsToFast(frame, 0);
+    }
+#endif
+
+    Py_DECREF(frame);
     return found;
 }
