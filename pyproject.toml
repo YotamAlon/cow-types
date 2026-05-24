@@ -18,5 +18,8 @@ extension-pkg-allow-list = ["cow_types._cow"]
 [tool.pylint."messages control"]
 disable = ["missing-module-docstring", "missing-class-docstring", "missing-function-docstring"]
 
+[tool.cibuildwheel]
+build = ["cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*", "cp314-*"]
+
 [tool.ci]
 python-versions = ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
